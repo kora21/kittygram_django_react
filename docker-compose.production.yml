@@ -1,12 +1,12 @@
-# Файл docker-compose.yml
+# docker-compose.production.yml
 version: '3'
 
 volumes:
   pg_data:
-  # Новый volume — для статических файлов
   static:
   media:
 
+# Всё отличие — заменяем build на image и указываем, какой образ использовать
 services:
   db:
     image: postgres:13.10
@@ -14,21 +14,19 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
-    build: ./backend/
+    image: userr12345/taski_backend
     env_file: .env
-    # Тут подключаем volume к backend
     volumes:
       - static:/backend_static
       - media:/app/media/
   frontend:
+    image: userr12345/taski_frontend  # Качаем с Docker Hub
     env_file: .env
-    build: ./frontend/
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static/
   gateway:
-    build: ./gateway/
-    # А тут подключаем volume со статикой к gateway
+    image: userr12345/taski_gateway  # Качаем с Docker Hub
     volumes:
       - static:/staticfiles/
       - media:/media/
