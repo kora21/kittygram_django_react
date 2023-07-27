@@ -201,8 +201,4 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-<<<<<<< HEAD
         message: Деплой успешно выполнен!
-=======
-        message: Деплой успешно выполнен!
->>>>>>> 6cd8894049e5c49ed1362c83356e26e48d158227
