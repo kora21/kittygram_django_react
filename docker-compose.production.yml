@@ -14,19 +14,19 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
-    image: userr12345/taski_backend
+    image: userr12345/kittygram_backend
     env_file: .env
     volumes:
       - static:/backend_static
       - media:/app/media/
   frontend:
-    image: userr12345/taski_frontend  # Качаем с Docker Hub
+    image: userr12345/kittygram_frontend  # Качаем с Docker Hub
     env_file: .env
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static/
   gateway:
-    image: userr12345/taski_gateway  # Качаем с Docker Hub
+    image: userr12345/kittygram_gateway  # Качаем с Docker Hub
     volumes:
       - static:/staticfiles/
       - media:/media/
