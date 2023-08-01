@@ -1,9 +1,7 @@
-# Файл docker-compose.yml
 version: '3'
 
 volumes:
   pg_data:
-  # Новый volume — для статических файлов
   static:
   media:
 
@@ -16,7 +14,6 @@ services:
   backend:
     build: ./backend/
     env_file: .env
-    # Тут подключаем volume к backend
     volumes:
       - static:/backend_static
       - media:/app/media/
@@ -28,7 +25,6 @@ services:
       - static:/static/
   gateway:
     build: ./gateway/
-    # А тут подключаем volume со статикой к gateway
     volumes:
       - static:/staticfiles/
       - media:/media/
