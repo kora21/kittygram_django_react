@@ -14,6 +14,8 @@ services:
   backend:
     image: userr12345/kittygram_backend:latest
     env_file: .env
+    depends_on:
+      - db
     volumes:
       - static:/backend_static
       - media:/app/media/
