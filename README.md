@@ -1,26 +1,142 @@
-#  Как работать с репозиторием финального задания
+# Kittygram - блог для размещение фотографий котиков. 
+ 
+### Описание проекта: 
+ 
+Проект Kittygram даёт возможность пользователям поделиться фотографиями своих любимымих котиков. Зарегистрированные пользователи могут создавать, просматривать, редактировать и удалять свои записи. 
+ 
+ 
+### Установка проекта: 
+ 
+ - Клонироуйте репозиторий:
+ 
+    ```bash
+    git clone git@github.com:nadin-belova/kittygram_final.git
+    ```
+    ```bash
+    cd kittygram
+    ```
+ - Создайте файл .env и заполните его своими данными:
 
-## Что нужно сделать
+    ```bash
+   # Секреты DB
+    POSTGRES_USER=[имя_пользователя_базы]
+    POSTGRES_PASSWORD=[пароль_к_базе]
+    POSTGRES_DB= [имя_базы_данных]
+    DB_PORT=[порт_соединения_к_базе]
+    DB_HOST=[db]
 
-Настроить запуск проекта Kittygram в контейнерах и CI/CD с помощью GitHub Actions
+   # Секреты джанги
+   SECRET_KEY='SECRET_KEY'
+   DEBUG=False
+   ALLOWED_HOSTS='ваш домен'
+    ``` 
 
-## Как проверить работу с помощью автотестов
+### Создание Docker-образов
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект Kittygram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект Taski
-dockerhub_username: ваш_логин_на_докерхабе
-```
+1.  Замените username на ваш логин на DockerHub:
 
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `kittygram_workflow.yml` в корневой директории проекта.
+    ```bash
+    cd frontend
+    docker build -t username/kittygram_frontend .
+    cd ../backend
+    docker build -t username/kittygram_backend .
+    cd ../nginx
+    docker build -t username/kittygram_gateway . 
+    ```
 
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
+2. Загрузите образы на DockerHub:
 
-## Чек-лист для проверки перед отправкой задания
+    ```bash
+    docker push username/kittygram_frontend
+    docker push username/kittygram_backend
+    docker push username/kittygram_gateway
+    ```
+  
+### Деплой на удалённый сервере
 
-- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
-- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
-- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
-- В корне проекта есть файл `kittygram_workflow.yml`.
+1. Подключитесь к удаленному серверу
+
+    ```bash
+    ssh -i путь_до_файла_с_SSH_ключом/название_файла_с_SSH_ключом имя_пользователя@ip_адрес_сервера 
+    ```
+
+2. Создайте на сервере директорию kittygram через терминал
+
+    ```bash
+    mkdir kittygram
+    ```
+
+3. Установка docker compose на сервер:
+
+    ```bash
+    sudo apt update
+    sudo apt install curl
+    curl -fSL https://get.docker.com -o get-docker.sh
+    sudo sh ./get-docker.sh
+    sudo apt-get install docker-compose-plugin
+    ```
+
+4. В директорию kittygram/ скопируйте файлы docker-compose.production.yml и .env:
+
+    ```bash
+    scp -i path_to_SSH/SSH_name docker-compose.production.yml username@server_ip:/home/username/kittygram/docker-compose.production.yml
+    ```
+
+5. Запустите docker compose в режиме демона:
+
+    ```bash
+    sudo docker compose -f docker-compose.production.yml up -d
+    ```
+
+6. Выполните миграции, соберите статику бэкенда и скопируйте их в /backend_static/static/:
+
+    ```bash
+    sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+    sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+    sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+    ```
+
+7. На сервере в редакторе nano откройте конфиг Nginx:
+
+    ```bash
+    sudo nano /etc/nginx/sites-enabled/default
+   
+    ```
+
+8. Добавте настройки location в секции server:
+
+    ```bash
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:9000;
+    }
+    ```
+
+9. Проверьте работоспособность конфигураций и перезапустите Nginx:
+
+    ```bash
+    sudo nginx -t 
+    sudo service nginx reload
+    ```
+ 
+ 
+###  Cсылк на развёрнутое приложение: 
+ 
+- #### https://nice-kittygram.hopto.org/
+ 
+ 
+### Технологии и необходимые ниструменты: 
+- Docker
+- Postgres
+- Python 3.x 
+- Node.js 9.x.x 
+- Git 
+- Nginx 
+- Gunicorn 
+- Django (backend) 
+- React (frontend) 
+ 
+ 
+### Автор 
+ 
+- Екатерина Тарасенко
