@@ -24,11 +24,6 @@
     POSTGRES_DB= [имя_базы_данных]
     DB_PORT=[порт_соединения_к_базе]
     DB_HOST=[db]
-
-   # Секреты джанги
-   SECRET_KEY='SECRET_KEY'
-   DEBUG=False
-   ALLOWED_HOSTS='ваш домен'
     ``` 
 
 ### Создание Docker-образов
@@ -118,11 +113,6 @@
     sudo nginx -t 
     sudo service nginx reload
     ```
- 
- 
-###  Cсылк на развёрнутое приложение: 
- 
-- #### https://nice-kittygram.hopto.org/
  
  
 ### Технологии и необходимые ниструменты: 
