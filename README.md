@@ -127,6 +127,5 @@
 - React (frontend) 
  
  
-### Автор 
- 
-- Екатерина Тарасенко
+Автор: 
+[Ekaterina Tarasenko](https://github.com/kora21/)
